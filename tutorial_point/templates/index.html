@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load discount_calc %}
+{% load static %}
+{% block title %} Home {% endblock %}
+{% block body %}
+
+
+<div class="container mt-3 ">
+  <div class="col-md-9" style="display: flex;
+  flex-wrap: wrap;">
+  <div class="row col-md-9" >
+{% for course in course_list %}
+<div class="card mx-2 mt-3" style="width: 18rem;" >
+  <img src="{{course.image.url}}" class="card-img-top" alt="...">
+
+  <div class="card-body"><h4>{{ course.title }}</h4>
+     <p class="card-text">{{ course.desc}}</p>
+    <h5 class="card-title">Rs. <del>{{ course.price }}</del>/-</h5>
+
+    <p class="card-text">Discount :- <b>{{ course.discount}}</b> %</p>
+    <h5 class="card-title">Rs.{% price_discount course.price course.discount %}/-</h5>
+      <div class="row">
+        {% is_enroll request course as enrolled %}
+
+        {% if enrolled %}
+          <a class="btn btn-primary mt-2" href="course/{{ course.slug }}" >Start Course</a>
+
+
+
+        {% elif request.session.email %}
+
+      <a class="btn btn-primary col-md-5 mx-2 mt-2" href="checkout/{{ course.slug }}"  >Enroll</a>
+      <a class="btn btn-primary col-md-5 mt-2" href="course/{{ course.slug }}" >More</a>
+
+        {% else %}
+
+      <a class="btn btn-primary col-md-5 mx-2" data-bs-toggle="modal" data-bs-target="#login" >Enroll</a>
+      <a class="btn btn-primary col-md-5" data-bs-toggle="modal" data-bs-target="#login" >More</a>
+        {% endif %}
+
+      </div>
+  </div>
+</div>
+    {% endfor %}
+  </div>
+    <div class="col-md-3 mt-3">
+  <img src="{% static 'images/udemy-logo.jpg' %}" alt="image"  height="47.5%" style="border-radius:7px">
+    </div>
+  </div>
+</div>
+{% endblock body %}

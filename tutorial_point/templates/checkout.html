@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load discount_calc %}
+{% block title %}Checkout {% endblock title %}
+{% block body %}
+<div class="container mt-5" style="margin-left:125px"  >
+    <div class="row" style="margin-left:25px">
+                {% comment %} card {% endcomment %}
+        <div class="col-5" style="padding-right:0px">
+                    <div class="card" style="width: 25rem;"   >
+                  <img src="{{ course.image.url }}" class="card-img-top" alt="..." >
+                  <div class="card-body">
+                    <p class="card-text">{{ course.desc }}</p>
+  </div>
+</div>
+        </div>
+                {% comment %} payment {% endcomment %}
+        <div class="col-7" >
+                <h1>{{ course.title}}</h1>
+                <p>Under offer :- <del>{{ course.price}}</del></p>
+                <h1>Discount : {{ course.price}}</h1>
+
+            <div >
+            <h3>Apply code :-</h3>
+                <br>
+                {% if coup %}
+               <div class="alert alert-primary" role="alert"  >
+                  You got : {{ coup.discount }}% Discount
+
+                </div>
+                {% elif cpn_code_msg %}
+                <div class="alert alert-primary" role="alert">
+                      {{ cpn_code_msg }}
+                </div>
+                {% endif %}
+                <form action="" method="get">
+                <input type="text" name="coupon" placeholder="Enter your coupon">
+                <input type="submit" value="Apply" class="btn btn-primary">
+                </form>
+
+                 <br>
+                {% if coup %}
+                <h1>Rs : {% price_discount course.price coup.discount %}</h1>
+                <a class="btn btn-success mt-2" href="?action=create_payment&coupon={{ coup.code }}">Continue to checkout</a>
+                {% else %}
+                <h1>Rs : {% price_discount course.price course.discount %}</h1>
+                <a class="btn btn-success mt-2" href="?action=create_payment">Continue to checkout</a>
+                {% endif %}
+
+
+        </div>
+        </div>
+
+    </div>
+ </div>
+
+<br>
+<br>
+
+{{ payment }}
+<!-- code for manual checkout with callback url -->
+
+{% if order_id is not None %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+    "key": 'rzp_test_YhM2ihUULnohna', // Enter the Key ID generated from the Dashboard
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "Concise_Diversity.Pvt.Ltd",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{ order_id }}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "callback_url": "http://127.0.0.1:8000/verify_payment",
+    "prefill": {
+        "name": "{{ user_id.name }}",
+        "email": "{{ user_id.email }}",
+        "contact": "9870635789"
+    },
+    "notes": {
+        "address": "{{ notes }}"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+
+rzp1.open();
+e.preventDefault();
+
+</script>
+
+{% endif %}
+
+
+{% endblock body %}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load discount_calc %}
+{% block title %}
+
+
+Course-details
+{% endblock title %}
+{% block body %}
+
+<div class="container" style="border:2px solid black; padding:5px; border-radius:5px; margin-top:40px;">
+    <div class="row">
+       <div class="col mx-2 ">
+        <ul class="list-group">
+            {% is_enroll request course  as  enrolled %}
+                {% for vid in co_dtls.video_set.all %}
+                     <li class="list-group-item {% if vid == video %} active-video {% endif %}" aria-current="true">
+                    <a href="?serial_no={{vid.s_no}}" class="{% if vid == video %} active-video-link {% endif %}{% if not enrolled and not vid.is_preview %}text-muted" style = "cursor: not-allowed;  {% endif %}">{{vid.title}}</a>
+                     </li>
+            {% endfor %}
+        </ul>
+       </div>
+        <div class="col-9 mt-1" >
+        <iframe width="830" height="393" style="border-radius:5px;" src="https://www.youtube.com/embed/{{ video.video_id }}" title="Django Website: Laying The Pipeline | Python Django Tutorials In Hindi #7" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <!-- this is for learning points -->
+
+        <div class="col">
+            <h4>You will learn here these points</h4>
+            <ul>
+            {% for i in co_dtls.learning_set.all %}
+             <li> {{ i.desc }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+
+
+      <!-- this is for pre-req points -->
+
+        <div class="col">
+            <h4>You should know these points</h4>
+
+            <ul>
+            {% for i in co_dtls.pre_req_set.all %}
+             <li> {{ i.desc }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+{% endblock body %}
